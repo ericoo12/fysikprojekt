@@ -98,6 +98,7 @@ public class AudioLoudnessDetection : MonoBehaviour
         // If the maxMagnitude is too low, it could be background noise or silence
         if (maxMagnitude < 0.0001f)
         {
+           
             return 0f; // Consider it no significant sound detected
         }
 

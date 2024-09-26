@@ -19,7 +19,9 @@ public class PlayerMovement : MonoBehaviour
     // Movement sensitivity based on frequency
     public float maxJumpStrength = 15f;  // Maximum jump for lowest frequencies
     public float minJumpStrength = 5f;   // Minimum jump for highest frequencies
+    public Animator animator;
 
+    private bool fly = false;
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
@@ -29,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         // Get loudness and dominant frequency from the microphone
         float rawLoudness = detector.GetLoudnessFromMicrophone();
         float loudness = rawLoudness * loudnessSensibility;
@@ -46,10 +49,21 @@ public class PlayerMovement : MonoBehaviour
 
                 // Apply jump force based on the frequency
                 body.velocity = new Vector2(body.velocity.y / 2, jumpStrength);
+
+                fly = true;
                 // body.velocity = new Vector2(body.velocity.y, jumpStrength);
+                   
                 Debug.Log("Loudness: " + loudness + " | Frequency: " + frequency + " | Jump Strength: " + jumpStrength);
             }
         }
+        animator.SetFloat("Jump", body.velocity.y);
+        animator.SetFloat("Fall", body.velocity.y);
+        if(isGrounded() && fly != false){
+            animator.SetBool("grounded", true);
+            Debug.Log(body.velocity.y);  
+            fly = false;
+        }
+       
     }
 
     private bool isGrounded()
