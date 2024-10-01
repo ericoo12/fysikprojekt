@@ -39,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
         // Only proceed if the loudness is above the threshold (someone is speaking)
         if (loudness > threshold && isGrounded())
         {
-            float frequency = detector.GetDominantFrequency();
+            float frequency = detector.GetDominantFrequencyUsingHPS();
 
             // If frequency is 0, we skip applying the jump (in case there's no significant sound)
             if (frequency > 0)
@@ -48,19 +48,17 @@ public class PlayerMovement : MonoBehaviour
                 float jumpStrength = CalculateJumpStrength(frequency);
 
                 // Apply jump force based on the frequency
-                body.velocity = new Vector2(body.velocity.y / 2, jumpStrength);
-
+                body.velocity = new Vector2(jumpStrength / 2, jumpStrength);
                 fly = true;
                 // body.velocity = new Vector2(body.velocity.y, jumpStrength);
                    
-                Debug.Log("Loudness: " + loudness + " | Frequency: " + frequency + " | Jump Strength: " + jumpStrength);
+               Debug.Log("Loudness: " + loudness + " | Frequency: " + frequency + " | Jump Strength: " + jumpStrength);
             }
         }
         animator.SetFloat("Jump", body.velocity.y);
         animator.SetFloat("Fall", body.velocity.y);
         if(isGrounded() && fly != false){
             animator.SetBool("grounded", true);
-            Debug.Log(body.velocity.y);  
             fly = false;
         }
        
@@ -74,27 +72,19 @@ public class PlayerMovement : MonoBehaviour
 
     public float CalculateJumpStrength(float frequency)
     {
-        // Debug log the frequency to ensure it's varying
-        Debug.Log("Frequency: " + frequency);
-
-        // Clamp the frequency within the range of minFrequency and maxFrequency
-        float clampedFrequency = Mathf.Clamp(frequency, detector.minFrequency, detector.maxFrequency);
-
-        // Debug log the clamped frequency
-        Debug.Log("Clamped Frequency: " + clampedFrequency);
-
-        // Reverse the mapping: high frequency = big jump, low frequency = small jump
-        float normalizedFrequency = Mathf.InverseLerp(detector.minFrequency, detector.maxFrequency, clampedFrequency);
-
-        // Debug log the normalized frequency (should be between 0 and 1)
-        Debug.Log("Normalized Frequency: " + normalizedFrequency);
-
-        // Calculate the jump strength based on the reverse frequency range
-        float jumpStrength = Mathf.Lerp(minJumpStrength, maxJumpStrength, normalizedFrequency);
-
-        // Debug log the final jump strength
-        Debug.Log("Calculated Jump Strength: " + jumpStrength);
-
+        float jumpStrength = 0;
+       if(frequency <50){
+        jumpStrength = 5f;
+       }
+       else if(frequency <100){
+         jumpStrength = 7f;
+       }
+       else if(frequency <200){
+         jumpStrength = 10f;
+       }
+       else if(frequency <300 || frequency > 300){
+         jumpStrength = 15f;
+       }
         return jumpStrength;
     }
 }

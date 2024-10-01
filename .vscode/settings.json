@@ -56,5 +56,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "fysikprojekt.sln"
+    "dotnet.defaultSolution": "fysikprojekt.sln",
+    "dotnet.preferCSharpExtension": true
 }
