@@ -2820,10 +2820,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6137a3165c9539046944f1f9fb6ed84a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sampleWindow: 64
-  spectrumSize: 1024
-  minFrequency: 300
-  maxFrequency: 1000
+  sampleWindow: 2560
+  spectrumSize: 8192
+  minFrequency: 50
+  maxFrequency: 400
 --- !u!1 &1900652851
 GameObject:
   m_ObjectHideFlags: 0

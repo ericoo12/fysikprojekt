@@ -5,7 +5,7 @@ using UnityEngine;
 public class AudioLoudnessDetection : MonoBehaviour
 {
     public int sampleWindow = 2560; // Number of samples for amplitude
-    public int spectrumSize = 16384; // Number of samples for frequency spectrum analysis
+    public int spectrumSize = 8192; // Number of samples for frequency spectrum analysis
     public float minFrequency = 50f;
     public float maxFrequency = 400f; 
     private AudioClip microphoneClip; // Microphone input
@@ -81,7 +81,7 @@ public class AudioLoudnessDetection : MonoBehaviour
         float[] spectrumData = new float[spectrumSize];
 
         // Get frequency spectrum data from the audio source
-        audioSource.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
+        audioSource.GetSpectrumData(spectrumData, 0, FFTWindow.Hanning);
 
         // Find the index of the largest frequency component
         float maxMagnitude = 0f;
@@ -118,7 +118,7 @@ public class AudioLoudnessDetection : MonoBehaviour
 
         // Create a float array to store spectrum data
         float[] spectrumData = new float[spectrumSize];
-        audioSource.GetSpectrumData(spectrumData, 0, FFTWindow.Hamming);
+        audioSource.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
 
         // Harmonic Product Spectrum: Downsample the spectrum multiple times and multiply them together
         int harmonics = 5; // Number of harmonics to use (HPS order)

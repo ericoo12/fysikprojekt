@@ -72,19 +72,20 @@ public class PlayerMovement : MonoBehaviour
 
     public float CalculateJumpStrength(float frequency)
     {
-        float jumpStrength = 0;
-       if(frequency <50){
-        jumpStrength = 5f;
-       }
-       else if(frequency <100){
-         jumpStrength = 7f;
-       }
-       else if(frequency <200){
-         jumpStrength = 10f;
-       }
-       else if(frequency <300 || frequency > 300){
-         jumpStrength = 15f;
-       }
+    //     float jumpStrength = 0;
+    //    if(frequency <50){
+    //     jumpStrength = 5f;
+    //    }
+    //    else if(frequency <100){
+    //      jumpStrength = 7f;
+    //    }
+    //    else if(frequency <200){
+    //      jumpStrength = 10f;
+    //    }
+    //    else if(frequency <300 || frequency > 300){
+    //      jumpStrength = 15f;
+    //    }
+     float jumpStrength = Mathf.Lerp(minJumpStrength, maxJumpStrength, Mathf.InverseLerp(detector.minFrequency, detector.maxFrequency, frequency));
         return jumpStrength;
     }
 }
