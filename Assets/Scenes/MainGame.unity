@@ -959,7 +959,7 @@ MonoBehaviour:
   source: {fileID: 0}
   detector: {fileID: 1848172619}
   loudnessSensibility: 100
-  threshold: 0.1
+  threshold: 0.0001
   maxJumpStrength: 15
   minJumpStrength: 5
   animator: {fileID: 393020380}

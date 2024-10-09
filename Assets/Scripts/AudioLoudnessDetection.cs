@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class AudioLoudnessDetection : MonoBehaviour
 {
-    public int sampleWindow = 2560; // Number of samples for amplitude
-    public int spectrumSize = 8192; // Number of samples for frequency spectrum analysis
+    public int sampleWindow = 256; // Number of samples for amplitude
+    public int spectrumSize = 2048; // Number of samples for frequency spectrum analysis
     public float minFrequency = 50f;
     public float maxFrequency = 400f; 
     private AudioClip microphoneClip; // Microphone input
@@ -24,7 +24,7 @@ public class AudioLoudnessDetection : MonoBehaviour
         string microphoneName = Microphone.devices[0];
 
         // Record microphone input (Name, Loop, Length in seconds, Frequency of mic)
-        microphoneClip = Microphone.Start(microphoneName, true, 20, AudioSettings.outputSampleRate);
+        microphoneClip = Microphone.Start(microphoneName, true, 10, AudioSettings.outputSampleRate);
 
         // Setup an AudioSource to play back the microphone input
         audioSource = gameObject.AddComponent<AudioSource>();
@@ -69,44 +69,6 @@ public class AudioLoudnessDetection : MonoBehaviour
         return totalLoudness / sampleWindow;
     }
 
-    public float GetDominantFrequency()
-    {
-        if (!audioSource.isPlaying || audioSource.clip == null)
-        {
-            Debug.LogWarning("AudioSource is not playing or has no clip.");
-            return 0f;
-        }
-
-        // Create a float array to store spectrum data
-        float[] spectrumData = new float[spectrumSize];
-
-        // Get frequency spectrum data from the audio source
-        audioSource.GetSpectrumData(spectrumData, 0, FFTWindow.Hanning);
-
-        // Find the index of the largest frequency component
-        float maxMagnitude = 0f;
-        int maxIndex = 0;
-        for (int i = 0; i < spectrumSize; i++)
-        {
-            if (spectrumData[i] > maxMagnitude)
-            {
-                maxMagnitude = spectrumData[i];
-                maxIndex = i;
-            }
-        }
-
-        // If the maxMagnitude is too low, it could be background noise or silence
-        if (maxMagnitude < 0.0001f)
-        {
-            return 0f; // Consider it no significant sound detected
-        }
-
-        // Convert index to frequency in Hertz
-        float frequency = maxIndex * (AudioSettings.outputSampleRate / 2f) / spectrumSize;
-
-        return frequency;
-    }
-
     // New method using Harmonic Product Spectrum (HPS) for fundamental frequency detection
     public float GetDominantFrequencyUsingHPS()
     {
@@ -121,7 +83,7 @@ public class AudioLoudnessDetection : MonoBehaviour
         audioSource.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
 
         // Harmonic Product Spectrum: Downsample the spectrum multiple times and multiply them together
-        int harmonics = 5; // Number of harmonics to use (HPS order)
+        int harmonics = 3; // Number of harmonics to use (HPS order)
         float[] hps = new float[spectrumSize];
         for (int i = 0; i < spectrumSize; i++)
         {
@@ -153,6 +115,7 @@ public class AudioLoudnessDetection : MonoBehaviour
         float frequency = maxIndex * (AudioSettings.outputSampleRate / 2f) / spectrumSize;
 
         // Return the detected dominant frequency
+       
         return frequency;
     }
 }

@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
     public float maxJumpStrength = 15f;  // Maximum jump for lowest frequencies
     public float minJumpStrength = 5f;   // Minimum jump for highest frequencies
     public Animator animator;
-
+ 
     private bool fly = false;
     private void Awake()
     {
@@ -35,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
         // Get loudness and dominant frequency from the microphone
         float rawLoudness = detector.GetLoudnessFromMicrophone();
         float loudness = rawLoudness * loudnessSensibility;
-
+      
         // Only proceed if the loudness is above the threshold (someone is speaking)
         if (loudness > threshold && isGrounded())
         {
@@ -72,20 +72,20 @@ public class PlayerMovement : MonoBehaviour
 
     public float CalculateJumpStrength(float frequency)
     {
-    //     float jumpStrength = 0;
-    //    if(frequency <50){
-    //     jumpStrength = 5f;
-    //    }
-    //    else if(frequency <100){
-    //      jumpStrength = 7f;
-    //    }
-    //    else if(frequency <200){
-    //      jumpStrength = 10f;
-    //    }
-    //    else if(frequency <300 || frequency > 300){
-    //      jumpStrength = 15f;
-    //    }
-     float jumpStrength = Mathf.Lerp(minJumpStrength, maxJumpStrength, Mathf.InverseLerp(detector.minFrequency, detector.maxFrequency, frequency));
+        float jumpStrength = 0;
+       if(frequency <100){
+        jumpStrength = 5f;
+       }
+       else if(frequency <150){
+         jumpStrength = 7f;
+       }
+       else if(frequency <300){
+         jumpStrength = 10f;
+       }
+       else if(frequency > 300){
+         jumpStrength = 15f;
+       }
         return jumpStrength;
     }
+    //float jumpStrength = Mathf.Lerp(minJumpStrength, maxJumpStrength, Mathf.InverseLerp(detector.minFrequency, detector.maxFrequency, frequency));
 }
