@@ -14,14 +14,22 @@ public class PlayerMovement : MonoBehaviour
     public AudioSource source;
     public AudioLoudnessDetection detector;
     public float loudnessSensibility = 1000f;
-    public float threshold = 0.0001f; // Threshold to detect actual speech, ignore too quiet sounds
+    public float threshold = 0.0001f; // Threshold to detect actual speech
+    public float frequencyAnalysisInterval = 0.2f; // Analyze frequency every 0.2 seconds
+    private float nextAnalysisTime = 0f;
 
     // Movement sensitivity based on frequency
     public float maxJumpStrength = 15f;  // Maximum jump for lowest frequencies
     public float minJumpStrength = 5f;   // Minimum jump for highest frequencies
     public Animator animator;
- 
+
     private bool fly = false;
+    private float jumpCooldown = 1f; // Cooldown between jumps
+    private float lastJumpTime = 0f;
+
+    private Queue<float> frequencyHistory = new Queue<float>();
+    public int smoothingFrames = 5; // Number of frames to average the frequency over
+
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
@@ -31,37 +39,67 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        // Get loudness and dominant frequency from the microphone
-        float rawLoudness = detector.GetLoudnessFromMicrophone();
-        float loudness = rawLoudness * loudnessSensibility;
-      
-        // Only proceed if the loudness is above the threshold (someone is speaking)
-        if (loudness > threshold && isGrounded())
+        // Wait for the next analysis time before analyzing sound
+        if (Time.time >= nextAnalysisTime)
         {
-            float frequency = detector.GetDominantFrequencyUsingHPS();
-
-            // If frequency is 0, we skip applying the jump (in case there's no significant sound)
-            if (frequency > 0)
-            {
-                // Calculate the jump strength based on frequency (low frequency = large jump, high frequency = small jump)
-                float jumpStrength = CalculateJumpStrength(frequency);
-
-                // Apply jump force based on the frequency
-                body.velocity = new Vector2(jumpStrength / 2, jumpStrength);
-                fly = true;
-                // body.velocity = new Vector2(body.velocity.y, jumpStrength);
-                   
-               Debug.Log("Loudness: " + loudness + " | Frequency: " + frequency + " | Jump Strength: " + jumpStrength);
-            }
+            AnalyzeAudio();
+            nextAnalysisTime = Time.time + frequencyAnalysisInterval; // Set the next analysis time
         }
+
         animator.SetFloat("Jump", body.velocity.y);
         animator.SetFloat("Fall", body.velocity.y);
-        if(isGrounded() && fly != false){
+        if (isGrounded() && fly)
+        {
             animator.SetBool("grounded", true);
             fly = false;
         }
-       
+    }
+
+    private void AnalyzeAudio()
+    {
+        // Get loudness and dominant frequency from the microphone
+        float rawLoudness = detector.GetLoudnessFromMicrophone();
+        float loudness = rawLoudness * loudnessSensibility;
+
+        // Only proceed if the loudness is above the threshold (someone is speaking)
+        if (loudness > threshold && isGrounded() && Time.time >= lastJumpTime + jumpCooldown)
+        {
+            float frequency = detector.GetDominantFrequencyUsingHPS();
+
+            // If frequency is 0, skip applying the jump
+            if (frequency > 0)
+            {
+                // Add the frequency to the history for smoothing
+                frequencyHistory.Enqueue(frequency);
+                if (frequencyHistory.Count > smoothingFrames)
+                {
+                    frequencyHistory.Dequeue();
+                }
+
+                // Calculate the average frequency over the smoothing frames
+                float smoothedFrequency = GetAverageFrequency();
+
+                // Calculate the jump strength based on smoothed frequency
+                float jumpStrength = CalculateJumpStrength(smoothedFrequency);
+
+                // Apply jump force based on the smoothed frequency
+                body.velocity = new Vector2(jumpStrength / 2, jumpStrength);
+                fly = true;
+                lastJumpTime = Time.time; // Update last jump time to enforce cooldown
+
+                Debug.Log("Loudness: " + loudness + " | Smoothed Frequency: " + smoothedFrequency + " | Jump Strength: " + jumpStrength);
+            }
+        }
+    }
+
+    private float GetAverageFrequency()
+    {
+        float total = 0;
+        foreach (float freq in frequencyHistory)
+        {
+            total += freq;
+        }
+        return total / frequencyHistory.Count;
     }
 
     private bool isGrounded()
@@ -73,19 +111,22 @@ public class PlayerMovement : MonoBehaviour
     public float CalculateJumpStrength(float frequency)
     {
         float jumpStrength = 0;
-       if(frequency <100){
-        jumpStrength = 5f;
-       }
-       else if(frequency <150){
-         jumpStrength = 7f;
-       }
-       else if(frequency <300){
-         jumpStrength = 10f;
-       }
-       else if(frequency > 300){
-         jumpStrength = 15f;
-       }
+        if (frequency < 100)
+        {
+            jumpStrength = 5f;
+        }
+        else if (frequency < 150)
+        {
+            jumpStrength = 7f;
+        }
+        else if (frequency < 300)
+        {
+            jumpStrength = 10f;
+        }
+        else if (frequency >= 300)
+        {
+            jumpStrength = 15f;
+        }
         return jumpStrength;
     }
-    //float jumpStrength = Mathf.Lerp(minJumpStrength, maxJumpStrength, Mathf.InverseLerp(detector.minFrequency, detector.maxFrequency, frequency));
 }
