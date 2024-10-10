@@ -5,16 +5,17 @@ using UnityEngine;
 public class AudioLoudnessDetection : MonoBehaviour
 {
     public int sampleWindow = 256; // Number of samples for amplitude
-    public int spectrumSize = 2048; // Number of samples for frequency spectrum analysis
+    public int spectrumSize = 4096; // Number of samples for frequency spectrum analysis
     public float minFrequency = 50f;
     public float maxFrequency = 400f; 
     private AudioClip microphoneClip; // Microphone input
 
     private AudioSource audioSource;
-
+    private int sampleRate;
     void Start()
     {
-        // Access microphone at start.
+        sampleRate = AudioSettings.outputSampleRate; // Dynamically get the sample rate
+        Debug.Log("Microphone sample rate: " + sampleRate); // Log the sample rate
         MicrophoneToAudioClip();
     }
 
@@ -24,7 +25,7 @@ public class AudioLoudnessDetection : MonoBehaviour
         string microphoneName = Microphone.devices[0];
 
         // Record microphone input (Name, Loop, Length in seconds, Frequency of mic)
-        microphoneClip = Microphone.Start(microphoneName, true, 10, AudioSettings.outputSampleRate);
+         microphoneClip = Microphone.Start(microphoneName, true, 10, sampleRate);
 
         // Setup an AudioSource to play back the microphone input
         audioSource = gameObject.AddComponent<AudioSource>();

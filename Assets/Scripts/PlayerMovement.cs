@@ -27,9 +27,6 @@ public class PlayerMovement : MonoBehaviour
     private float jumpCooldown = 1f; // Cooldown between jumps
     private float lastJumpTime = 0f;
 
-    private Queue<float> frequencyHistory = new Queue<float>();
-    public int smoothingFrames = 5; // Number of frames to average the frequency over
-
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
@@ -69,37 +66,18 @@ public class PlayerMovement : MonoBehaviour
             // If frequency is 0, skip applying the jump
             if (frequency > 0)
             {
-                // Add the frequency to the history for smoothing
-                frequencyHistory.Enqueue(frequency);
-                if (frequencyHistory.Count > smoothingFrames)
-                {
-                    frequencyHistory.Dequeue();
-                }
 
-                // Calculate the average frequency over the smoothing frames
-                float smoothedFrequency = GetAverageFrequency();
-
-                // Calculate the jump strength based on smoothed frequency
-                float jumpStrength = CalculateJumpStrength(smoothedFrequency);
+                // Calculate the jump strength based on the frequency
+                float jumpStrength = CalculateJumpStrength(frequency);
 
                 // Apply jump force based on the smoothed frequency
                 body.velocity = new Vector2(jumpStrength / 2, jumpStrength);
                 fly = true;
                 lastJumpTime = Time.time; // Update last jump time to enforce cooldown
 
-                Debug.Log("Loudness: " + loudness + " | Smoothed Frequency: " + smoothedFrequency + " | Jump Strength: " + jumpStrength);
+                Debug.Log("Loudness: " + loudness + " | Frequency: " + frequency + " | Jump Strength: " + jumpStrength);
             }
         }
-    }
-
-    private float GetAverageFrequency()
-    {
-        float total = 0;
-        foreach (float freq in frequencyHistory)
-        {
-            total += freq;
-        }
-        return total / frequencyHistory.Count;
     }
 
     private bool isGrounded()
@@ -111,15 +89,15 @@ public class PlayerMovement : MonoBehaviour
     public float CalculateJumpStrength(float frequency)
     {
         float jumpStrength = 0;
-        if (frequency < 100)
+        if (frequency > 100)
         {
             jumpStrength = 5f;
         }
-        else if (frequency < 150)
+        else if (frequency > 150)
         {
             jumpStrength = 7f;
         }
-        else if (frequency < 300)
+        else if (frequency> 300)
         {
             jumpStrength = 10f;
         }
