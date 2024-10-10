@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     public AudioSource source;
     public AudioLoudnessDetection detector;
     public float loudnessSensibility = 1000f;
-    public float threshold = 0.0001f; // Threshold to detect actual speech
+    public float threshold = 0.01f; // Threshold to detect actual speech
     public float frequencyAnalysisInterval = 0.2f; // Analyze frequency every 0.2 seconds
     private float nextAnalysisTime = 0f;
 
@@ -133,6 +133,7 @@ public class PlayerMovement : MonoBehaviour
         {
             jumpStrength = 15f;
         }
+        //float jumpStrength = Mathf.Lerp(minJumpStrength, maxJumpStrength, (frequency - detector.minFrequency) / (detector.maxFrequency - detector.minFrequency));
         return jumpStrength;
     }
 }

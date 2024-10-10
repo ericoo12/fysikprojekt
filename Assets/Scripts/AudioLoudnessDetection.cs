@@ -26,13 +26,17 @@ public class AudioLoudnessDetection : MonoBehaviour
 
         // Record microphone input (Name, Loop, Length in seconds, Frequency of mic)
          microphoneClip = Microphone.Start(microphoneName, true, 10, sampleRate);
-
-        // Setup an AudioSource to play back the microphone input
+         // Setup an AudioSource to play back the microphone input
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.clip = microphoneClip;
+
+        while (!(Microphone.GetPosition(microphoneName) > 0)) { }
+    
+    // Once recording starts, play the audio source
         audioSource.loop = true;
-        audioSource.mute = false; // Set this to false if you want to hear the audio, otherwise keep it true for silent
         audioSource.Play();
+        audioSource.mute = false;  // Set this to false if you want to hear the audio, otherwise keep it true for silent
+        
     }
 
     public float GetLoudnessFromMicrophone()
