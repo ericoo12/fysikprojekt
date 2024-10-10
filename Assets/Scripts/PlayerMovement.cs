@@ -89,7 +89,7 @@ public class PlayerMovement : MonoBehaviour
     public float CalculateJumpStrength(float frequency)
     {
         float jumpStrength = 0;
-        if (frequency > 100)
+        if (frequency < 100)
         {
             jumpStrength = 5f;
         }
