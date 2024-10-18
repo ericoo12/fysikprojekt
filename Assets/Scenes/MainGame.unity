@@ -829,7 +829,7 @@ MonoBehaviour:
   source: {fileID: 0}
   detector: {fileID: 1848172619}
   loudnessSensibility: 100
-  threshold: 0.0001
+  threshold: 0.01
   frequencyAnalysisInterval: 0.2
   maxJumpStrength: 15
   minJumpStrength: 5

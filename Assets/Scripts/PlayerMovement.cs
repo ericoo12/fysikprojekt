@@ -88,52 +88,52 @@ public class PlayerMovement : MonoBehaviour
 
     public float CalculateJumpStrength(float frequency)
     {
-        float jumpStrength = 0;
-        if (frequency < 100)
-        {
-            jumpStrength = 5f;
-        }
-        else if (frequency < 120)
-        {
-            jumpStrength = 6f;
-        }
-        else if (frequency < 140)
-        {
-            jumpStrength = 7f;
-        }
-        else if (frequency < 160)
-        {
-            jumpStrength = 8f;
-        }
-        else if (frequency < 180)
-        {
-            jumpStrength = 9f;
-        }
-        else if (frequency < 200)
-        {
-            jumpStrength = 10f;
-        }
-        else if (frequency < 220)
-        {
-            jumpStrength = 11f;
-        }
-        else if (frequency < 240)
-        {
-            jumpStrength = 12f;
-        }
-        else if (frequency < 260)
-        {
-            jumpStrength = 13f;
-        }
-        else if (frequency < 280)
-        {
-            jumpStrength = 14f;
-        }
-        else if (frequency >= 300)
-        {
-            jumpStrength = 15f;
-        }
-        //float jumpStrength = Mathf.Lerp(minJumpStrength, maxJumpStrength, (frequency - detector.minFrequency) / (detector.maxFrequency - detector.minFrequency));
+        // float jumpStrength = 0;
+        // if (frequency < 100)
+        // {
+        //     jumpStrength = 5f;
+        // }
+        // else if (frequency < 120)
+        // {
+        //     jumpStrength = 6f;
+        // }
+        // else if (frequency < 140)
+        // {
+        //     jumpStrength = 7f;
+        // }
+        // else if (frequency < 160)
+        // {
+        //     jumpStrength = 8f;
+        // }
+        // else if (frequency < 180)
+        // {
+        //     jumpStrength = 9f;
+        // }
+        // else if (frequency < 200)
+        // {
+        //     jumpStrength = 10f;
+        // }
+        // else if (frequency < 220)
+        // {
+        //     jumpStrength = 11f;
+        // }
+        // else if (frequency < 240)
+        // {
+        //     jumpStrength = 12f;
+        // }
+        // else if (frequency < 260)
+        // {
+        //     jumpStrength = 13f;
+        // }
+        // else if (frequency < 280)
+        // {
+        //     jumpStrength = 14f;
+        // }
+        // else if (frequency >= 300)
+        // {
+        //     jumpStrength = 15f;
+        // }
+        float jumpStrength = Mathf.Lerp(minJumpStrength, maxJumpStrength, (frequency - detector.minFrequency) / (detector.maxFrequency - detector.minFrequency));
         return jumpStrength;
     }
 }
